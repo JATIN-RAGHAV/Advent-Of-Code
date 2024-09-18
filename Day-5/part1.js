@@ -68,19 +68,12 @@ const formatData = (data) => {
     return newData;
 }
 
-// Function to map source to destination
-const mapSourceToDestination = (string, values)=>{
-    let [source,_,destination] = string.split('-');
-    destination = destination.split(' ')[0];
-    return [source, destination]
-}
-
 // Function that returns tha value using source destination and range;
 const mapValue = (value, mapBlock)=>{
     for(let i = 0;i<mapBlock.length;i++){
         const source = mapBlock[i][1];
         const range = mapBlock[i][2];
-        if(value>source && value<source+range){
+        if(value>=source && value<=source+range){
             const destination = mapBlock[i][0];
             const mappedValue = destination-source+value;
             return mappedValue;
@@ -125,6 +118,6 @@ const justDoIt = (data) =>{
     return mappedArray[ansIndex];
 }
 
-console.log(justDoIt(data));
+console.log(justDoIt(testData));
 
 // 11379441
