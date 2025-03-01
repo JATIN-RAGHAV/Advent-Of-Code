@@ -22,12 +22,12 @@ char *globalPlacesString[30];
 int currentIndex = 0;
 int nodeCount = 0;
 int grid[30][30] = {0};
-pair *giveShortestParth(char *s, int);
+pair *giveLongestParth(char *s, int);
 int getHash(char *s);
 char * getName(int n);
 command* findcommand(char *s);
 void executeCommand(command cmd);
-uint findShortestPath(int start, int end, uchar [],int remainingCount);
+uint findLongestPath(int start, int end, uchar [],int remainingCount);
 
 int main(){
 	FILE* file = fopen("text.txt", "r");
@@ -40,7 +40,7 @@ int main(){
 
 	fread(buffer, 1, lenght, file);
 
-	pair *ans = giveShortestParth(buffer,lenght);
+	pair *ans = giveLongestParth(buffer,lenght);
 	printf("Start: %d, End: %d, Distance: %d\n",ans->start, ans->end, ans->dist);
 	
 	free(ans);
@@ -48,7 +48,7 @@ int main(){
 	fclose(file);
 }
 
-pair *giveShortestParth(char *s,int len){
+pair *giveLongestParth(char *s,int len){
 	char line[200];
 	int index = 0;
 	
@@ -76,8 +76,8 @@ pair *giveShortestParth(char *s,int len){
 	}
 	printf("]\n");
 
-	pair* smallestPair = (pair *)malloc(sizeof(pair));
-	smallestPair->dist = INT_MAX;
+	pair* LargestPair = (pair *)malloc(sizeof(pair));
+	LargestPair->dist = 0;
 
 	for(int i = 0;i<nodeCount;i++){
 		for(int j = i+1;j<nodeCount;j++){
@@ -90,22 +90,22 @@ pair *giveShortestParth(char *s,int len){
 			// for(int i = 0;i<nodeCount;i++)
 			// 	printf("%d,",visited[i]);
 			// printf("]\n");
-			int currentDist= findShortestPath(i, j,visited, nodeCount-2);
+			int currentDist= findLongestPath(i, j,visited, nodeCount-2);
 			 // printf("Start: %d, End: %d, Distance: %d\n",i, j, currentDist);
-			if(smallestPair->dist > currentDist){
+			if(LargestPair->dist < currentDist){
 			// printf("Start: %d, End: %d, Distance: %d\n",i, j, currentDist);
-				smallestPair->start = i;
-				smallestPair->end = j;
-				smallestPair->dist = currentDist;
+				LargestPair->start = i;
+				LargestPair->end = j;
+				LargestPair->dist = currentDist;
 			}
 			free(visited);
 		}
 	}
 
-	return smallestPair;
+	return LargestPair;
 }
 
-uint findShortestPath(int start, int end, uchar visited[],int remainingCount){
+uint findLongestPath(int start, int end, uchar visited[],int remainingCount){
 	// printf("Visited: ");
 	// for(int i = 0;i<nodeCount;i++)
 	// 	printf("%d,",visited[i]);
@@ -121,7 +121,7 @@ uint findShortestPath(int start, int end, uchar visited[],int remainingCount){
 		return grid[start][middleNode] + grid[middleNode][end];
 	}
 
-	uint smallestSum = UINT_MAX;
+	uint LargestSum = 0;
 
 	for(int i = 0;i<nodeCount;i++){
 		if(visited[i] == 0 && i!= end){
@@ -130,10 +130,10 @@ uint findShortestPath(int start, int end, uchar visited[],int remainingCount){
 				visitedCopy[j] = visited[j];
 			visitedCopy[end] = 1;
 
-			uint currentSum = findShortestPath(start, i, visitedCopy, remainingCount-1);
+			uint currentSum = findLongestPath(start, i, visitedCopy, remainingCount-1);
 			currentSum += grid[i][end];
-			if(currentSum < smallestSum){
-				smallestSum = currentSum;
+			if(currentSum > LargestSum){
+				LargestSum = currentSum;
 			}
 
 			free(visitedCopy);
@@ -141,7 +141,7 @@ uint findShortestPath(int start, int end, uchar visited[],int remainingCount){
 	}
 
 		
-	return smallestSum;
+	return LargestSum;
 }
 
 void executeCommand(command cmd){
