@@ -27,6 +27,7 @@ std::string get_input(int year, int date){
 	cookie >> cookie_str;
 	cookie_stream << "cookie:session=" << cookie_str;
 	header = curl_slist_append(header, cookie_stream.str().c_str());
+	cookie.close();
 
 	std::string response;
 
@@ -37,13 +38,12 @@ std::string get_input(int year, int date){
 	curl_easy_setopt(curl, CURLOPT_SSL_VERIFYHOST, 2L);
 	curl_easy_setopt(curl, CURLOPT_HTTPHEADER, header);
 
-	std::cout << url_stream.str() << '\n';
 	CURLcode res = curl_easy_perform(curl);
 	if(res == CURLE_OK){
-		std::cout << response;
+		return response;
 	}
 	else{
 		std::cerr << "Couln't get input";
+		exit(1);
 	}
-	return response;
 }
