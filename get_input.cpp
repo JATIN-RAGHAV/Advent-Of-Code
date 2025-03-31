@@ -5,10 +5,10 @@
 #include <iostream>
 #include <fstream>
 
-size_t WriteCallback(void* contents, size_t size, size_t nmemb, std::string* output) {
+size_t write_call_back(void* contents, size_t size, size_t nmemb, std::string* output) {
 	size_t total_size = size * nmemb;
 	output->append((char*)contents, total_size);
-	return output->size();
+	return total_size;
 }
 
 std::string get_input(int year, int date){
@@ -30,9 +30,10 @@ std::string get_input(int year, int date){
 	cookie.close();
 
 	std::string response;
+	response.reserve(4 * 1024 * 1024);
 
 	curl_easy_setopt(curl, CURLOPT_URL, url_stream.str().c_str());
-	curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, WriteCallback);
+	curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, write_call_back);
 	curl_easy_setopt(curl, CURLOPT_WRITEDATA, &response);
 	curl_easy_setopt(curl, CURLOPT_SSL_VERIFYPEER, 1L);
 	curl_easy_setopt(curl, CURLOPT_SSL_VERIFYHOST, 2L);
@@ -43,6 +44,7 @@ std::string get_input(int year, int date){
 		return response;
 	}
 	else{
+		std::cout << response;
 		std::cerr << "Couln't get input";
 		exit(1);
 	}
